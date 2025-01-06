@@ -2,5 +2,6 @@
     <string name="app_name">Dice</string>
     <string name="button_text">Button</string>
     <string name="roll">Roll</string>
+    <string name="enter_target_number">Enter target number</string>
 </resources>
 
