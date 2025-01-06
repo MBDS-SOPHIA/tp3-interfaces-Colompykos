@@ -3,5 +3,7 @@
     <string name="button_text">Button</string>
     <string name="roll">Roll</string>
     <string name="enter_target_number">Enter target number</string>
+    <string name="dice_1">Premier dé</string>
+    <string name="dice_2">Second dé</string>
 </resources>
 

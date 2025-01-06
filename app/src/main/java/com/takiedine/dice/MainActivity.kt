@@ -7,7 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.animation.BounceInterpolator
 import android.widget.EditText
-import android.widget.TextView
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 
         val targetNumberEditText: EditText = findViewById(R.id.targetNumber)
 
-        // Watcher pour déclencher le lancer de dés
         targetNumberEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -47,17 +46,18 @@ class MainActivity : AppCompatActivity() {
         val diceRoll1 = dice1.roll()
         val diceRoll2 = dice2.roll()
 
-        val resultTextView1: TextView = findViewById(R.id.textView1)
-        val resultTextView2: TextView = findViewById(R.id.textView2)
-        resultTextView1.text = diceRoll1.toString()
-        resultTextView2.text = diceRoll2.toString()
+        val diceImage1: ImageView = findViewById(R.id.diceImage1)
+        val diceImage2: ImageView = findViewById(R.id.diceImage2)
+
+        diceImage1.setImageResource(getDiceDrawable(diceRoll1))
+        diceImage2.setImageResource(getDiceDrawable(diceRoll2))
 
         val targetNumberEditText: EditText = findViewById(R.id.targetNumber)
         val targetNumber = targetNumberEditText.text.toString().toIntOrNull()
 
         if (targetNumber != null) {
             if (diceRoll1 + diceRoll2 == targetNumber) {
-                animateDice(resultTextView1, resultTextView2)
+                animateDice(diceImage1, diceImage2)
                 playConfettiAnimation()
                 Toast.makeText(this, "Congratulations! You win!", Toast.LENGTH_SHORT).show()
             } else {
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun animateDice(dice1: TextView, dice2: TextView) {
+    private fun animateDice(dice1: ImageView, dice2: ImageView) {
         val animator1 = ObjectAnimator.ofFloat(dice1, "translationY", 0f, -100f).apply {
             duration = 500
             interpolator = BounceInterpolator()
@@ -89,5 +89,17 @@ class MainActivity : AppCompatActivity() {
         val confettiAnimation: LottieAnimationView = findViewById(R.id.confettiAnimation)
         confettiAnimation.visibility = LottieAnimationView.VISIBLE
         confettiAnimation.playAnimation()
+    }
+
+    private fun getDiceDrawable(value: Int): Int {
+        return when (value) {
+            1 -> R.drawable.dice1
+            2 -> R.drawable.dice2
+            3 -> R.drawable.dice3
+            4 -> R.drawable.dice4
+            5 -> R.drawable.dice5
+            6 -> R.drawable.dice6
+            else -> R.drawable.dice1
+        }
     }
 }
