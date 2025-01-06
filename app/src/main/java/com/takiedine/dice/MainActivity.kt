@@ -1,10 +1,11 @@
 package com.takiedine.dice
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.Button
+import android.view.animation.BounceInterpolator
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -12,9 +13,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.airbnb.lottie.LottieAnimationView
 
 class MainActivity : AppCompatActivity() {
-    @SuppressLint("ShowToast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,22 +26,18 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val rollButton: Button = findViewById(R.id.button)
         val targetNumberEditText: EditText = findViewById(R.id.targetNumber)
 
-        // Disable the roll button initially
-        rollButton.isEnabled = false
-
-        // Enable the roll button when a number is entered
+        // Watcher pour déclencher le lancer de dés
         targetNumberEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                rollButton.isEnabled = s.toString().isNotEmpty()
+                if (s.toString().isNotEmpty()) {
+                    rollDice()
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-
-        rollButton.setOnClickListener { rollDice() }
     }
 
     @SuppressLint("SetTextI18n")
@@ -60,10 +57,37 @@ class MainActivity : AppCompatActivity() {
 
         if (targetNumber != null) {
             if (diceRoll1 + diceRoll2 == targetNumber) {
+                animateDice(resultTextView1, resultTextView2)
+                playConfettiAnimation()
                 Toast.makeText(this, "Congratulations! You win!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Try again!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun animateDice(dice1: TextView, dice2: TextView) {
+        val animator1 = ObjectAnimator.ofFloat(dice1, "translationY", 0f, -100f).apply {
+            duration = 500
+            interpolator = BounceInterpolator()
+            repeatCount = 2
+            repeatMode = ObjectAnimator.REVERSE
+        }
+
+        val animator2 = ObjectAnimator.ofFloat(dice2, "translationY", 0f, -100f).apply {
+            duration = 500
+            interpolator = BounceInterpolator()
+            repeatCount = 2
+            repeatMode = ObjectAnimator.REVERSE
+        }
+
+        animator1.start()
+        animator2.start()
+    }
+
+    private fun playConfettiAnimation() {
+        val confettiAnimation: LottieAnimationView = findViewById(R.id.confettiAnimation)
+        confettiAnimation.visibility = LottieAnimationView.VISIBLE
+        confettiAnimation.playAnimation()
     }
 }
